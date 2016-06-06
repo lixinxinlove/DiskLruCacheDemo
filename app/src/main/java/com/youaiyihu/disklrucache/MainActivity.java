@@ -24,7 +24,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Path;
 
 public class MainActivity extends AppCompatActivity {
-    
+
     private String data = "";
 
     @Override
@@ -68,7 +68,6 @@ public class MainActivity extends AppCompatActivity {
     @OnClick(R.id.button2)
     public void saveToCache(View v) {
 
-
         try {
             File cacheDir = getCacheDir(getApplication(), "mydata");
             if (!cacheDir.exists()) {
@@ -86,8 +85,6 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
     }
 
 
@@ -95,20 +92,36 @@ public class MainActivity extends AppCompatActivity {
 
     @OnClick(R.id.button3)
     public void readCache(View v) {
-
         try {
             DiskLruCache.Snapshot snapShot = mDiskLruCache.get(KEY);
             if (snapShot != null) {
                 strData = snapShot.getString(0);
-
                 Toast.makeText(this, strData, Toast.LENGTH_LONG).show();
-
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    ACache mACache = null;
+
+    @OnClick(R.id.button4)
+    public void saveToACache(View v) {
+
+
+        mACache = ACache.get(MainActivity.this, 10 * 1024 * 1024, 100);
+
+        mACache.put("data", data, ACache.TIME_HOUR*2);
+    }
+
+
+    @OnClick(R.id.button5)
+    public void readFromACache(View v) {
+        strData = "";
+        strData = mACache.getAsString("data");
+        Toast.makeText(this, strData, Toast.LENGTH_LONG).show();
+
+    }
 
     /**
      * 获取缓存的路径
@@ -153,4 +166,6 @@ public class MainActivity extends AppCompatActivity {
                 @Path("page") int page
         );
     }
+
+
 }
